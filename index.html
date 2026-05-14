@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Risk Analyzer</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    body{
+      background:#0f172a;
+      color:white;
+      padding:20px;
+    }
+
+    .container{
+      max-width:700px;
+      margin:auto;
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:30px;
+      font-size:2rem;
+      font-weight:800;
+    }
+
+    .card{
+      background:#1e293b;
+      padding:20px;
+      border-radius:20px;
+      margin-bottom:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .slider-group{
+      margin-bottom:20px;
+    }
+
+    .label-row{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:8px;
+      font-size:15px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      appearance:none;
+      height:10px;
+      border-radius:10px;
+      background:#334155;
+      outline:none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb{
+      appearance:none;
+      width:22px;
+      height:22px;
+      border-radius:50%;
+      background:#3b82f6;
+      cursor:pointer;
+    }
+
+    .score-box{
+      text-align:center;
+      margin-top:10px;
+    }
+
+    .score{
+      font-size:64px;
+      font-weight:800;
+      margin-top:10px;
+    }
+
+    .risk-label{
+      margin-top:10px;
+      font-size:20px;
+      font-weight:700;
+    }
+
+    .save-btn{
+      width:100%;
+      margin-top:20px;
+      padding:15px;
+      border:none;
+      border-radius:15px;
+      background:#2563eb;
+      color:white;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .save-btn:hover{
+      transform:scale(1.02);
+    }
+
+    .history-item{
+      background:#334155;
+      padding:12px;
+      border-radius:12px;
+      margin-top:10px;
+    }
+
+    canvas{
+      margin-top:20px;
+    }
+
+    @media(max-width:600px){
+      .score{
+        font-size:48px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Risk Analyzer</h1>
+
+  <div class="card">
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>経済困窮度</span>
+        <span id="economyValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="economy">
+    </div>
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>教育水準</span>
+        <span id="educationValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="education">
+    </div>
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>家庭環境</span>
+        <span id="familyValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="family">
+    </div>
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>依存傾向</span>
+        <span id="substanceValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="substance">
+    </div>
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>交友関係</span>
+        <span id="peerValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="peer">
+    </div>
+
+    <div class="slider-group">
+      <div class="label-row">
+        <span>地域環境</span>
+        <span id="regionValue">50</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="region">
+    </div>
+
+  </div>
+
+  <div class="card score-box">
+
+    <h2>総合指数</h2>
+
+    <div class="score" id="score">50</div>
+
+    <div class="risk-label" id="riskLabel">
+      中リスク
+    </div>
+
+    <canvas id="radarChart"></canvas>
+
+    <button class="save-btn" onclick="saveData()">
+      履歴保存
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h2>保存履歴</h2>
+
+    <div id="history"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+const sliders = {
+
+  economy: document.getElementById("economy"),
+  education: document.getElementById("education"),
+  family: document.getElementById("family"),
+  substance: document.getElementById("substance"),
+  peer: document.getElementById("peer"),
+  region: document.getElementById("region")
+
+};
+
+const valueDisplays = {
+
+  economy: document.getElementById("economyValue"),
+  education: document.getElementById("educationValue"),
+  family: document.getElementById("familyValue"),
+  substance: document.getElementById("substanceValue"),
+  peer: document.getElementById("peerValue"),
+  region: document.getElementById("regionValue")
+
+};
+
+const scoreDisplay = document.getElementById("score");
+const riskLabel = document.getElementById("riskLabel");
+
+const ctx = document.getElementById('radarChart');
+
+const radarChart = new Chart(ctx, {
+
+  type: 'radar',
+
+  data: {
+
+    labels: [
+      '経済',
+      '教育',
+      '家庭',
+      '依存',
+      '交友',
+      '地域'
+    ],
+
+    datasets: [{
+
+      label: 'Risk Data',
+
+      data: [50,50,50,50,50,50],
+
+      fill: true
+
+    }]
+
+  },
+
+  options: {
+
+    responsive:true,
+
+    scales: {
+
+      r: {
+
+        min:0,
+        max:100,
+
+        ticks:{
+          color:'white'
+        },
+
+        pointLabels:{
+          color:'white'
+        },
+
+        grid:{
+          color:'#475569'
+        }
+
+      }
+
+    },
+
+    plugins:{
+
+      legend:{
+        labels:{
+          color:'white'
+        }
+      }
+
+    }
+
+  }
+
+});
+
+function calculateScore(){
+
+  const E = parseInt(sliders.economy.value);
+  const Edu = parseInt(sliders.education.value);
+  const F = parseInt(sliders.family.value);
+  const S = parseInt(sliders.substance.value);
+  const P = parseInt(sliders.peer.value);
+  const R = parseInt(sliders.region.value);
+
+  valueDisplays.economy.innerText = E;
+  valueDisplays.education.innerText = Edu;
+  valueDisplays.family.innerText = F;
+  valueDisplays.substance.innerText = S;
+  valueDisplays.peer.innerText = P;
+  valueDisplays.region.innerText = R;
+
+  const score =
+    (0.25 * E) +
+    (0.20 * Edu) +
+    (0.15 * F) +
+    (0.15 * S) +
+    (0.15 * P) +
+    (0.10 * R);
+
+  const finalScore = Math.round(score);
+
+  scoreDisplay.innerText = finalScore;
+
+  let label = "";
+  let color = "";
+
+  if(finalScore < 20){
+
+    label = "低リスク";
+    color = "#22c55e";
+
+  }else if(finalScore < 40){
+
+    label = "やや低リスク";
+    color = "#84cc16";
+
+  }else if(finalScore < 60){
+
+    label = "中リスク";
+    color = "#f59e0b";
+
+  }else if(finalScore < 80){
+
+    label = "高リスク";
+    color = "#ef4444";
+
+  }else{
+
+    label = "非常に高リスク";
+    color = "#dc2626";
+
+  }
+
+  riskLabel.innerText = label;
+
+  scoreDisplay.style.color = color;
+  riskLabel.style.color = color;
+
+  radarChart.data.datasets[0].data = [E,Edu,F,S,P,R];
+
+  radarChart.update();
+
+}
+
+Object.values(sliders).forEach(slider=>{
+
+  slider.addEventListener("input", calculateScore);
+
+});
+
+function saveData(){
+
+  const history =
+    JSON.parse(localStorage.getItem("riskHistory")) || [];
+
+  const item = {
+
+    date: new Date().toLocaleString(),
+    score: scoreDisplay.innerText
+
+  };
+
+  history.unshift(item);
+
+  localStorage.setItem(
+    "riskHistory",
+    JSON.stringify(history)
+  );
+
+  loadHistory();
+
+}
+
+function loadHistory(){
+
+  const historyContainer =
+    document.getElementById("history");
+
+  const history =
+    JSON.parse(localStorage.getItem("riskHistory")) || [];
+
+  historyContainer.innerHTML = "";
+
+  history.forEach(item=>{
+
+    const div = document.createElement("div");
+
+    div.className = "history-item";
+
+    div.innerHTML = `
+      <strong>Score:</strong> ${item.score}<br>
+      <small>${item.date}</small>
+    `;
+
+    historyContainer.appendChild(div);
+
+  });
+
+}
+
+calculateScore();
+loadHistory();
+
+</script>
+
+</body>
+</html>
