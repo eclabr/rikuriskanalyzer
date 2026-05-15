@@ -2,206 +2,509 @@
 <html lang="ja">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Risk Analyzer</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
 
-  <style>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
+<title>Risk Analyzer</title>
 
-    body{
-      background:#0f172a;
-      color:white;
-      padding:20px;
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    .container{
-      max-width:700px;
-      margin:auto;
-    }
+<style>
 
-    h1{
-      text-align:center;
-      margin-bottom:30px;
-      font-size:2rem;
-      font-weight:800;
-    }
+/* =========================
+   RESET
+========================= */
 
-    .card{
-      background:#1e293b;
-      padding:20px;
-      border-radius:20px;
-      margin-bottom:20px;
-      box-shadow:0 5px 15px rgba(0,0,0,0.3);
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 
-    .slider-group{
-      margin-bottom:20px;
-    }
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
 
-    .label-row{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:8px;
-      font-size:15px;
-    }
+body{
 
-    input[type="range"]{
-      width:100%;
-      appearance:none;
-      height:10px;
-      border-radius:10px;
-      background:#334155;
-      outline:none;
-    }
+  background:
+    linear-gradient(
+      180deg,
+      #050816 0%,
+      #0f172a 100%
+    );
 
-    input[type="range"]::-webkit-slider-thumb{
-      appearance:none;
-      width:22px;
-      height:22px;
-      border-radius:50%;
-      background:#3b82f6;
-      cursor:pointer;
-    }
+  color:white;
 
-    .score-box{
-      text-align:center;
-      margin-top:10px;
-    }
+  min-height:100vh;
 
-    .score{
-      font-size:64px;
-      font-weight:800;
-      margin-top:10px;
-    }
+  padding:14px;
+}
 
-    .risk-label{
-      margin-top:10px;
-      font-size:20px;
-      font-weight:700;
-    }
+/* =========================
+   TITLE
+========================= */
 
-    .save-btn{
-      width:100%;
-      margin-top:20px;
-      padding:15px;
-      border:none;
-      border-radius:15px;
-      background:#2563eb;
-      color:white;
-      font-size:16px;
-      font-weight:700;
-      cursor:pointer;
-      transition:0.2s;
-    }
+h1{
 
-    .save-btn:hover{
-      transform:scale(1.02);
-    }
+  text-align:center;
 
-    .history-item{
-      background:#334155;
-      padding:12px;
-      border-radius:12px;
-      margin-top:10px;
-    }
+  font-size:2rem;
 
-    canvas{
-      margin-top:20px;
-    }
+  margin-bottom:18px;
 
-    @media(max-width:600px){
-      .score{
-        font-size:48px;
-      }
-    }
+  font-weight:900;
 
-  </style>
+  letter-spacing:2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff00ff,
+      #00ffff
+    );
+
+  -webkit-background-clip:text;
+
+  -webkit-text-fill-color:transparent;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.dashboard{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+
+  gap:16px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+
+  background:
+    rgba(15,23,42,0.88);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius:22px;
+
+  padding:18px;
+
+  box-shadow:
+    0 0 25px rgba(0,255,255,0.08);
+}
+
+h2{
+
+  margin-bottom:16px;
+
+  font-size:1.1rem;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.input-group{
+
+  margin-bottom:16px;
+}
+
+.label-row{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  margin-bottom:8px;
+
+  font-size:14px;
+
+  font-weight:700;
+}
+
+.value{
+
+  color:#00ffff;
+}
+
+input[type="range"]{
+
+  width:100%;
+
+  height:8px;
+
+  appearance:none;
+
+  border-radius:999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff00ff,
+      #00ffff
+    );
+}
+
+input[type="range"]::-webkit-slider-thumb{
+
+  appearance:none;
+
+  width:22px;
+  height:22px;
+
+  border-radius:50%;
+
+  background:white;
+
+  border:3px solid #00ffff;
+
+  cursor:pointer;
+}
+
+/* SELECT */
+
+select{
+
+  width:100%;
+
+  padding:12px;
+
+  border-radius:14px;
+
+  border:none;
+
+  background:#111827;
+
+  color:white;
+
+  font-size:14px;
+}
+
+/* =========================
+   SCORE
+========================= */
+
+.score{
+
+  width:170px;
+  height:170px;
+
+  margin:auto;
+
+  border-radius:50%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:54px;
+
+  font-weight:900;
+
+  color:#ffd166;
+
+  background:
+    conic-gradient(
+      #ff00ff,
+      #00ffff,
+      #ff00ff
+    );
+
+  margin-bottom:14px;
+}
+
+.score-inner{
+
+  width:135px;
+  height:135px;
+
+  background:#0f172a;
+
+  border-radius:50%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+}
+
+.risk-label{
+
+  text-align:center;
+
+  font-size:22px;
+
+  font-weight:800;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+button{
+
+  width:100%;
+
+  padding:15px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff00ff,
+      #00ffff
+    );
+
+  color:white;
+
+  font-size:15px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  margin-top:18px;
+}
+
+/* =========================
+   AI
+========================= */
+
+.ai-box{
+
+  line-height:1.8;
+
+  background:
+    rgba(255,255,255,0.04);
+
+  padding:16px;
+
+  border-radius:16px;
+}
+
+/* =========================
+   HISTORY
+========================= */
+
+.history-item{
+
+  background:
+    rgba(255,255,255,0.04);
+
+  padding:12px;
+
+  border-radius:14px;
+
+  margin-top:10px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  .dashboard{
+
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<div class="container">
+<h1>RISK ANALYZER</h1>
 
-  <h1>Risk Analyzer</h1>
+<div class="dashboard">
+
+  <!-- 入力 -->
 
   <div class="card">
 
-    <div class="slider-group">
+    <h2>基本情報</h2>
+
+    <div class="input-group">
+
       <div class="label-row">
-        <span>経済困窮度</span>
-        <span id="economyValue">50</span>
+        <span>年齢</span>
       </div>
-      <input type="range" min="0" max="100" value="50" id="economy">
+
+      <select id="age">
+
+        <option value="10">10代</option>
+        <option value="20">20代</option>
+        <option value="30">30代</option>
+        <option value="40">40代</option>
+        <option value="50">50代</option>
+
+      </select>
+
     </div>
 
-    <div class="slider-group">
+    <div class="input-group">
+
       <div class="label-row">
-        <span>教育水準</span>
-        <span id="educationValue">50</span>
+        <span>性別</span>
       </div>
-      <input type="range" min="0" max="100" value="50" id="education">
+
+      <select id="gender">
+
+        <option value="5">男性</option>
+        <option value="3">女性</option>
+        <option value="4">その他</option>
+
+      </select>
+
     </div>
 
-    <div class="slider-group">
+    <div class="input-group">
+
       <div class="label-row">
-        <span>家庭環境</span>
-        <span id="familyValue">50</span>
+        <span>血液型</span>
       </div>
-      <input type="range" min="0" max="100" value="50" id="family">
+
+      <select id="blood">
+
+        <option value="1">A型</option>
+        <option value="2">B型</option>
+        <option value="3">O型</option>
+        <option value="4">AB型</option>
+
+      </select>
+
     </div>
 
-    <div class="slider-group">
-      <div class="label-row">
-        <span>依存傾向</span>
-        <span id="substanceValue">50</span>
-      </div>
-      <input type="range" min="0" max="100" value="50" id="substance">
-    </div>
+    <div class="input-group">
 
-    <div class="slider-group">
       <div class="label-row">
-        <span>交友関係</span>
-        <span id="peerValue">50</span>
+        <span>星座</span>
       </div>
-      <input type="range" min="0" max="100" value="50" id="peer">
-    </div>
 
-    <div class="slider-group">
-      <div class="label-row">
-        <span>地域環境</span>
-        <span id="regionValue">50</span>
-      </div>
-      <input type="range" min="0" max="100" value="50" id="region">
+      <select id="zodiac">
+
+        <option value="1">牡羊座</option>
+        <option value="2">牡牛座</option>
+        <option value="3">双子座</option>
+        <option value="4">蟹座</option>
+        <option value="5">獅子座</option>
+        <option value="6">乙女座</option>
+        <option value="7">天秤座</option>
+        <option value="8">蠍座</option>
+        <option value="9">射手座</option>
+        <option value="10">山羊座</option>
+        <option value="11">水瓶座</option>
+        <option value="12">魚座</option>
+
+      </select>
+
     </div>
 
   </div>
 
-  <div class="card score-box">
+  <!-- スライダー -->
+
+  <div class="card">
+
+    <h2>リスク項目</h2>
+
+    <div id="sliders"></div>
+
+  </div>
+
+  <!-- スコア -->
+
+  <div class="card">
 
     <h2>総合指数</h2>
 
-    <div class="score" id="score">50</div>
+    <div class="score">
 
-    <div class="risk-label" id="riskLabel">
+      <div
+        class="score-inner"
+        id="score"
+      >
+        50
+      </div>
+
+    </div>
+
+    <div
+      class="risk-label"
+      id="riskLabel"
+    >
       中リスク
     </div>
 
-    <canvas id="radarChart"></canvas>
-
-    <button class="save-btn" onclick="saveData()">
-      履歴保存
+    <button id="saveBtn">
+      保存
     </button>
 
   </div>
+
+  <!-- AI -->
+
+  <div class="card">
+
+    <h2>AI分析</h2>
+
+    <div
+      class="ai-box"
+      id="aiComment"
+    >
+
+      分析待機中
+
+    </div>
+
+  </div>
+
+  <!-- レーダー -->
+
+  <div class="card">
+
+    <h2>レーダー分析</h2>
+
+    <canvas id="radarChart"></canvas>
+
+  </div>
+
+  <!-- 棒 -->
+
+  <div class="card">
+
+    <h2>要因別分析</h2>
+
+    <canvas id="barChart"></canvas>
+
+  </div>
+
+  <!-- 履歴 -->
 
   <div class="card">
 
@@ -215,227 +518,385 @@
 
 <script>
 
-const sliders = {
+/* =========================
+   PARAMS
+========================= */
 
-  economy: document.getElementById("economy"),
-  education: document.getElementById("education"),
-  family: document.getElementById("family"),
-  substance: document.getElementById("substance"),
-  peer: document.getElementById("peer"),
-  region: document.getElementById("region")
+const riskItems = [
 
-};
+  "経済",
+  "教育",
+  "家庭",
+  "依存",
+  "交友",
+  "地域",
+  "精神",
+  "攻撃性"
 
-const valueDisplays = {
+];
 
-  economy: document.getElementById("economyValue"),
-  education: document.getElementById("educationValue"),
-  family: document.getElementById("familyValue"),
-  substance: document.getElementById("substanceValue"),
-  peer: document.getElementById("peerValue"),
-  region: document.getElementById("regionValue")
+/* =========================
+   スライダー生成
+========================= */
 
-};
+const sliderArea =
+  document.getElementById("sliders");
 
-const scoreDisplay = document.getElementById("score");
-const riskLabel = document.getElementById("riskLabel");
+riskItems.forEach((item,index)=>{
 
-const ctx = document.getElementById('radarChart');
+  sliderArea.innerHTML += `
 
-const radarChart = new Chart(ctx, {
+    <div class="input-group">
 
-  type: 'radar',
+      <div class="label-row">
 
-  data: {
+        <span>${item}</span>
 
-    labels: [
-      '経済',
-      '教育',
-      '家庭',
-      '依存',
-      '交友',
-      '地域'
-    ],
+        <span
+          class="value"
+          id="value${index}"
+        >
+          50
+        </span>
 
-    datasets: [{
+      </div>
 
-      label: 'Risk Data',
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        id="slider${index}"
+      >
 
-      data: [50,50,50,50,50,50],
+    </div>
 
-      fill: true
+  `;
 
-    }]
+});
 
-  },
+/* =========================
+   CHARTS
+========================= */
 
-  options: {
+const radarChart = new Chart(
 
-    responsive:true,
+  document.getElementById("radarChart"),
 
-    scales: {
+  {
 
-      r: {
+    type:"radar",
 
-        min:0,
-        max:100,
+    data:{
 
-        ticks:{
-          color:'white'
-        },
+      labels:riskItems,
 
-        pointLabels:{
-          color:'white'
-        },
+      datasets:[{
 
-        grid:{
-          color:'#475569'
-        }
+        data:new Array(
+          riskItems.length
+        ).fill(50),
 
-      }
+        backgroundColor:
+          "rgba(255,0,255,0.2)",
 
-    },
+        borderColor:"#00ffff",
 
-    plugins:{
+        borderWidth:2
 
-      legend:{
-        labels:{
-          color:'white'
-        }
-      }
+      }]
 
     }
 
   }
 
-});
+);
 
-function calculateScore(){
+const barChart = new Chart(
 
-  const E = parseInt(sliders.economy.value);
-  const Edu = parseInt(sliders.education.value);
-  const F = parseInt(sliders.family.value);
-  const S = parseInt(sliders.substance.value);
-  const P = parseInt(sliders.peer.value);
-  const R = parseInt(sliders.region.value);
+  document.getElementById("barChart"),
 
-  valueDisplays.economy.innerText = E;
-  valueDisplays.education.innerText = Edu;
-  valueDisplays.family.innerText = F;
-  valueDisplays.substance.innerText = S;
-  valueDisplays.peer.innerText = P;
-  valueDisplays.region.innerText = R;
+  {
 
-  const score =
-    (0.25 * E) +
-    (0.20 * Edu) +
-    (0.15 * F) +
-    (0.15 * S) +
-    (0.15 * P) +
-    (0.10 * R);
+    type:"bar",
 
-  const finalScore = Math.round(score);
+    data:{
 
-  scoreDisplay.innerText = finalScore;
+      labels:riskItems,
 
-  let label = "";
-  let color = "";
+      datasets:[{
 
-  if(finalScore < 20){
+        data:new Array(
+          riskItems.length
+        ).fill(50)
 
-    label = "低リスク";
-    color = "#22c55e";
+      }]
 
-  }else if(finalScore < 40){
-
-    label = "やや低リスク";
-    color = "#84cc16";
-
-  }else if(finalScore < 60){
-
-    label = "中リスク";
-    color = "#f59e0b";
-
-  }else if(finalScore < 80){
-
-    label = "高リスク";
-    color = "#ef4444";
-
-  }else{
-
-    label = "非常に高リスク";
-    color = "#dc2626";
+    }
 
   }
 
-  riskLabel.innerText = label;
+);
 
-  scoreDisplay.style.color = color;
-  riskLabel.style.color = color;
+/* =========================
+   CALC
+========================= */
 
-  radarChart.data.datasets[0].data = [E,Edu,F,S,P,R];
+function calculateRisk(){
+
+  let values = [];
+
+  riskItems.forEach((item,index)=>{
+
+    const slider = document.getElementById(
+      `slider${index}`
+    );
+
+    const val =
+      parseInt(slider.value);
+
+    values.push(val);
+
+    document.getElementById(
+      `value${index}`
+    ).innerText = val;
+
+  });
+
+  /* 基本情報 */
+
+  const age =
+    parseInt(
+      document.getElementById("age").value
+    );
+
+  const gender =
+    parseInt(
+      document.getElementById("gender").value
+    );
+
+  const blood =
+    parseInt(
+      document.getElementById("blood").value
+    );
+
+  const zodiac =
+    parseInt(
+      document.getElementById("zodiac").value
+    );
+
+  let average =
+
+    values.reduce((a,b)=>a+b,0)
+    / values.length;
+
+  /* 加算 */
+
+  average +=
+    age * 0.2 +
+    gender +
+    blood * 0.3 +
+    zodiac * 0.1;
+
+  average =
+    Math.round(average);
+
+  if(average > 100){
+    average = 100;
+  }
+
+  /* 表示 */
+
+  document.getElementById(
+    "score"
+  ).innerText = average;
+
+  let label = "";
+  let comment = "";
+
+  if(average < 30){
+
+    label = "低リスク";
+
+    comment =
+      "安定傾向です。";
+
+  }else if(average < 60){
+
+    label = "中リスク";
+
+    comment =
+      "注意要因があります。";
+
+  }else{
+
+    label = "高リスク";
+
+    comment =
+      "複数項目で高値です。";
+
+  }
+
+  document.getElementById(
+    "riskLabel"
+  ).innerText = label;
+
+  document.getElementById(
+    "aiComment"
+  ).innerText =
+
+    `総合指数 ${average}
+    / 100
+
+    AI分析:
+    ${comment}`;
+
+  /* 更新 */
+
+  radarChart.data.datasets[0].data =
+    values;
 
   radarChart.update();
 
+  barChart.data.datasets[0].data =
+    values;
+
+  barChart.update();
+
 }
 
-Object.values(sliders).forEach(slider=>{
+/* =========================
+   EVENTS
+========================= */
 
-  slider.addEventListener("input", calculateScore);
+riskItems.forEach((item,index)=>{
+
+  document.getElementById(
+    `slider${index}`
+  ).addEventListener(
+    "input",
+    calculateRisk
+  );
 
 });
 
-function saveData(){
+document.getElementById("age")
+.addEventListener(
+  "change",
+  calculateRisk
+);
 
-  const history =
-    JSON.parse(localStorage.getItem("riskHistory")) || [];
+document.getElementById("gender")
+.addEventListener(
+  "change",
+  calculateRisk
+);
 
-  const item = {
+document.getElementById("blood")
+.addEventListener(
+  "change",
+  calculateRisk
+);
 
-    date: new Date().toLocaleString(),
-    score: scoreDisplay.innerText
+document.getElementById("zodiac")
+.addEventListener(
+  "change",
+  calculateRisk
+);
 
-  };
+/* =========================
+   SAVE
+========================= */
 
-  history.unshift(item);
+document.getElementById("saveBtn")
+.addEventListener(
+  "click",
+  ()=>{
 
-  localStorage.setItem(
-    "riskHistory",
-    JSON.stringify(history)
-  );
+    const history = JSON.parse(
 
-  loadHistory();
+      localStorage.getItem(
+        "riskHistory"
+      )
 
-}
+    ) || [];
+
+    history.unshift({
+
+      score:
+        document.getElementById(
+          "score"
+        ).innerText,
+
+      date:
+        new Date()
+        .toLocaleString()
+
+    });
+
+    localStorage.setItem(
+
+      "riskHistory",
+
+      JSON.stringify(history)
+
+    );
+
+    loadHistory();
+
+  }
+);
+
+/* =========================
+   HISTORY
+========================= */
 
 function loadHistory(){
 
-  const historyContainer =
-    document.getElementById("history");
+  const area =
+    document.getElementById(
+      "history"
+    );
 
-  const history =
-    JSON.parse(localStorage.getItem("riskHistory")) || [];
+  const history = JSON.parse(
 
-  historyContainer.innerHTML = "";
+    localStorage.getItem(
+      "riskHistory"
+    )
+
+  ) || [];
+
+  area.innerHTML = "";
 
   history.forEach(item=>{
 
-    const div = document.createElement("div");
+    area.innerHTML += `
 
-    div.className = "history-item";
+      <div class="history-item">
 
-    div.innerHTML = `
-      <strong>Score:</strong> ${item.score}<br>
-      <small>${item.date}</small>
+        <strong>
+          Score:
+          ${item.score}
+        </strong>
+
+        <br>
+
+        <small>
+          ${item.date}
+        </small>
+
+      </div>
+
     `;
-
-    historyContainer.appendChild(div);
 
   });
 
 }
 
-calculateScore();
+/* 初期化 */
+
+calculateRisk();
+
 loadHistory();
 
 </script>

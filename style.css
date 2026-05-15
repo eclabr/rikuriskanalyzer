@@ -1,0 +1,116 @@
+/* ===== グリッド ===== */
+
+.dashboard-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+
+  gap:24px;
+}
+
+/* 横幅いっぱい */
+
+.full-width{
+
+  grid-column:1/-1;
+}
+
+/* AIボックス */
+
+.ai-box{
+
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius:20px;
+
+  padding:18px;
+
+  line-height:1.8;
+
+  font-size:15px;
+
+  color:#e2e8f0;
+}
+
+/* 改善項目 */
+
+.improve-list{
+
+  display:flex;
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.improve-item{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:14px;
+
+  border-radius:16px;
+
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+}
+
+/* バッジ */
+
+.badge{
+
+  padding:
+    6px 12px;
+
+  border-radius:999px;
+
+  font-size:12px;
+
+  font-weight:700;
+}
+
+.red{
+
+  background:#ef444433;
+  color:#ff6b6b;
+
+  box-shadow:
+    0 0 10px #ef444455;
+}
+
+.orange{
+
+  background:#f59e0b33;
+  color:#ffb84d;
+}
+
+.blue{
+
+  background:#00ffff22;
+  color:#67e8f9;
+}
+
+/* スコア中央 */
+
+.score-box{
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+}
